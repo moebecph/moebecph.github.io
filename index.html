@@ -1,0 +1,781 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<title>MOEBE Store Locator</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: sans-serif;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 0px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+    .controls:focus {
+        border-color:black;
+    }
+    .title {
+        font-weight: bold;
+    }
+    .bold-name{
+        font-weight: bold;
+    }
+    .get-directions-link, .get-directions-link:hover , .get-directions-link:after{
+        color:rgb(0, 0, 0);
+        font-size: 0.8em;
+        font-weight:bold;
+        text-decoration: none;
+    }
+    .gm-style div div div div div div div div a, 
+    .gm-style div div div div div div div div a:hover, 
+    .gm-style div div div div div div div div a :after {
+        color: black;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    #infowindow-content {
+        display: none;
+        text-decoration: none;
+    }
+    #main-container{
+        width:100%;
+        height:100%;
+    }
+    #map{
+        width:100%;
+        height: 50%;
+        float: left;
+    }
+    .threeCols {
+        background-color: rgb(255, 255, 255);
+        width: 100%;
+        max-height:275px;
+        float:left;
+        overflow-x:hidden;
+        overflow-y:scroll;
+        font-family: sans-serif;
+        margin-top:54px;
+        margin-bottom:36px;
+        min-height: auto;
+    }
+    /* scrollbar start */
+    .threeCols::-webkit-scrollbar-track{
+        border-right: 1px solid white;
+        
+    }
+    .threeCols::-webkit-scrollbar{
+        width: 5px;
+        background-color: rgb(255, 255, 255);
+    }
+    .threeCols::-webkit-scrollbar-thumb {
+        background-color: #ffffff;
+    } 
+    /* scrollbar end */
+    .scroll{
+        background-color: rgb(255, 255, 255);
+        width: 100%;
+        max-height:275px;
+        float:left;
+        overflow-x:hidden;
+        overflow-y:scroll;
+        font-family: sans-serif;
+        margin-top:54px;
+        margin-bottom:36px;
+        min-height: auto;
+    }
+    /* scrollbar start */
+    .scroll::-webkit-scrollbar-track{
+        border-right: 1px solid black;
+    }
+    .scroll::-webkit-scrollbar{
+        width: 5px;
+        background-color: rgb(255, 255, 255);
+       
+    }
+    .scroll::-webkit-scrollbar-thumb {
+        background-color: #000000;
+    } 
+    /* scrollbar end */
+    #google-input {
+        margin-left:0px;
+        padding-left:0px;
+        left:0px;
+        background-color: rgb(155, 155, 155);
+        width: 100%;
+        min-width: 200px;
+        left:0px;
+        height:auto;
+        float:left;
+        margin-bottom:36px;
+        margin-top:12px;
+    }
+    .visiblePointInfo {
+        margin-left:60px;
+        position:relative;
+        font-family: sans-serif;
+    }
+    .marker-link{
+        font-size: 13px;
+        text-align: left;
+    }
+    .get-directions{
+        margin-left:60px;
+        position:relative;
+        margin-bottom:48px;
+        margin-top:10px;
+        text-align: left;
+    }
+    .icoMarker{
+        margin-top:-14px;
+        padding-top: 20px;
+        padding-bottom: 40px;        
+        width:36px;
+        height:auto;
+        margin-left:10px;
+        display: block;
+        float:left;
+        position:relative;
+        text-align: left;
+    }
+    .pac-item {
+        background-color: white;
+        font-size:13px;
+        color: black;
+    }
+    .pac-item:hover {
+        background-color: #DFCFBF;
+    }
+    .pac-item-query {
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+        font-size:13px;
+    }
+    .pac-icon {
+        display: none;
+    }
+    .pac-container {
+        background-color: rgb(27, 5, 5);
+        position: absolute!important;
+        z-index: 1000;
+        font-family: Arial, sans-serif;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    .pac-matched {
+        color:black;
+        font-weight: bold !important;
+        font-family: Arial, Helvetica, sans-serif;
+    }   
+    .pac-logo:after {
+        background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-non-white3_hdpi.png);
+        background-position: right;
+        background-repeat: no-repeat;
+    }
+    .hdpi.pac-logo:after {
+        background-image: url(https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-non-white3_hdpi.png)
+    }
+    #pac-input{
+        left:0px;
+        margin:0px;
+        padding:0px;
+        float: left;
+        font-family: Arial, Helvetica, sans-serif;
+        border-bottom-color: black;
+        box-shadow: none;
+        border-radius: 0px;
+        outline:none;
+        width:100%;
+    }
+    #pac-input:focus {
+        border-radius: 0px;
+        outline:none;
+        outline-color: none;
+        outline-style: none;
+        outline-width: none;
+        border-top:0px;
+        border-left:0px;
+        border-right: 0px;
+        border-bottom: 1px solid black;
+        box-shadow:none;
+    }
+    #pac-input::placeholder {
+        color:rgb(196, 196, 196);
+        font-family: sans-serif;
+        text-transform: uppercase !important;
+        text-align:left !important;  
+        font-weight: 100 !important;
+        font-size:10px !important;
+    }
+    .outsideMarker {
+        padding-left:5%;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXnXT75ZtS6frrimdr51BAvH05e4Ss1UI&libraries=places" async defer ></script>
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+</head>
+<body style="margin:0px; padding:0px;" >
+
+    <div id="main-container">
+        <div id="google-input" class="col-md-4 " style="background-color:white">
+            <input id="pac-input" class="controls pac-input-moebe" type="text" placeholder="SEARCH LOCATION">
+            <div id="infowindow-content">
+                <span id="place-name"  class="title"></span><br>
+                Place ID <span id="place-id"></span><br>
+                <span id="place-address"></span>
+                <span id="place-website"></span>
+            </div>
+        </div>  
+        <div id="map"></div>
+        <div id="threeCols" class="row threeCols" >
+            <div id="column-1" class="col-md-4 outsideMarker"></div>
+            <div id="column-2" class="col-md-4 outsideMarker"></div>
+            <div id="column-3" class="col-md-4 outsideMarker"></div>
+        </div>
+    </div>
+
+<script>
+    //on load initMap   
+    window.addEventListener( 'load', function( event ) {
+        initMap();
+    });   
+     
+    function initMap() {   
+        var copenhagen = new google.maps.LatLng(55.6760968,12.5683372);
+        var el = document.getElementById('map');
+        var bounds;
+        var mapOptions =  {
+            center: copenhagen,
+            zoom: 13,
+            disableDefaultUI: true,
+            scaleControl: true,
+            zoomControl: true,
+            styles: [
+            {elementType: 'geometry', stylers: [{color: '#DFCFBF'}]},
+            {elementType: 'labels.text.stroke', stylers: [{"visibility": "off"}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#3f3f3f'}]},
+            {
+                featureType: 'administrative.locality',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#3f3f3f'}],
+            },            
+            {
+                featureType: 'poi',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#3f3f3f'}]
+            },
+            {
+                featureType: 'poi.park',
+                elementType: 'geometry',
+                stylers: [{color: '#DFCFBF'}]
+            },
+            {
+                featureType: 'poi.park',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#3f3f3f'}]
+            },
+            {
+                featureType: "poi",
+                elementType: "labels.icon",
+                stylers: [{"visibility": "off"}]
+            },
+            {
+                featureType: 'road',
+                elementType: 'geometry',
+                stylers: [{color: '#EFE7DF'}]
+            },
+            {
+                featureType: 'road',
+                elementType: 'geometry.stroke',
+                stylers: [{"visibility": "off"}]
+            },
+            {
+                featureType: 'road',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#3f3f3f'}]
+            },
+            {
+                featureType: 'road.highway',
+                elementType: 'geometry',
+                stylers: [{color: '#EFE7DF'}]
+            },
+            {
+                featureType: 'road.highway',
+                elementType: 'geometry.stroke',
+                stylers: [{"visibility": "off"}]
+            },
+            {
+                featureType: 'road.highway',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#F3F3F3'}]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels.icon",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                featureType: 'transit',
+                elementType: 'geometry',
+                stylers: [{color: '#DFCFBF'}]
+            },
+            {
+                "featureType": "transit",
+                "elementType": "labels.icon",
+                "stylers": [{"visibility": "off"}]
+            },
+            {
+                featureType: 'transit.station',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#3f3f3f'}]
+            },
+            {
+                featureType: 'country',
+                elementType: 'geometry.stroke',
+                stylers: [{color: '#c3a688'}]
+            },
+            {
+                featureType: 'water',
+                elementType: 'geometry',
+                stylers: [{color: '#ffffff'}]
+            },
+            {
+                featureType: 'water',
+                elementType: 'labels.text.fill',
+                stylers: [{color: '#3f3f3f'}]
+            },
+            {
+                featureType: 'water',
+                elementType: 'labels.text.stroke',
+                stylers: [{"visibility": "off"}]
+            }
+            ],
+            mapTypeId: 'roadmap',
+            mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+        };//end map options 
+        var map = new google.maps.Map(el, mapOptions);
+        var slowPanTo = function(map, endPosition, n_intervals, T_msec) {
+            var f_timeout, getStep, i, j, lat_array, lat_delta, lat_step, lng_array, lng_delta, lng_step, pan, ref, startPosition;
+            getStep = function(delta) {
+                return parseFloat(delta) / n_intervals;
+            };
+            startPosition = map.getCenter();
+            lat_delta = endPosition.lat() - startPosition.lat();
+            lng_delta = endPosition.lng() - startPosition.lng();
+            lat_step = getStep(lat_delta);
+            lng_step = getStep(lng_delta);
+            lat_array = [];
+            lng_array = [];
+            for (i = j = 1, ref = n_intervals; j <= ref; i = j += +1) {
+                lat_array.push(map.getCenter().lat() + i * lat_step);
+                lng_array.push(map.getCenter().lng() + i * lng_step);
+            }
+            f_timeout = function(i, i_min, i_max) {
+                return parseFloat(T_msec) / n_intervals;
+            };
+            pan = function(i) {
+                if (i < lat_array.length) {
+                    return setTimeout(function() {
+                        map.panTo(new google.maps.LatLng({
+                            lat: lat_array[i],
+                            lng: lng_array[i]
+                        }));
+                        return pan(i + 1);
+                    }, f_timeout(i, 0, lat_array.length - 1));
+                }
+            };
+            return pan(0);
+        };
+        // Autocomplete place id
+        var input = document.getElementById('pac-input');
+        var autocomplete = new google.maps.places.Autocomplete(input, {placeIdOnly: true}, {types: ['geocode']});
+        autocomplete.bindTo('bounds', map);
+        var infowindow = new google.maps.InfoWindow();
+        var infowindowContent = document.getElementById('infowindow-content');
+        infowindow.setContent(infowindowContent);
+        var geocoder = new google.maps.Geocoder;
+        var marker = new google.maps.Marker({
+            map: map
+        });
+        input.addEventListener("keyup", function(event) {
+            event.preventDefault();
+            var firstResult = $(".pac-container .pac-item:first").text();            
+            if (event.keyCode === 13) {
+                geocoder.geocode({"address":firstResult }, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var lat = results[0].geometry.location.lat(),
+                        lng = results[0].geometry.location.lng(),
+                        placeName = results[0].address_components[0].long_name,
+                        latlng = new google.maps.LatLng(lat, lng);
+                        // Test address_components
+                        var ac_length = results[0].address_components.length;
+                        if (results[0].address_components[0].types[0] == "country") {
+                            // country
+                            map.setCenter(results[0].geometry.location);
+                            map.setZoom(7);
+                        } else if (results[0].address_components[0].types[0] == "locality") {
+                            // city
+                            map.setCenter(results[0].geometry.location);
+                            map.setZoom(13);
+                        } else {
+                            // Everything else can have a standard zoom level
+                            map.setCenter(results[0].geometry.location);
+                            map.setZoom(17);
+                        }
+                    }
+                });
+            }
+        }); 
+        autocomplete.addListener('place_changed', function() {
+            infowindow.close();
+            var place = autocomplete.getPlace();
+            if (!place.place_id) {
+                return;
+            }
+            geocoder.geocode({'placeId': place.place_id}, function(results, status) {
+                if (status !== 'OK') {
+                    window.alert('Geocoder failed due to: ' + status);
+                    return;
+                }
+                if (results[0].address_components[0].types[0] == "country") {
+                    // country
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(7);
+                } else if (results[0].address_components[0].types[0] == "locality" || results[0].address_components[0].types[0] == "sublocality" || results[0].address_components[0].types[0] == "postal_code") {
+                    // city
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(13);
+                } else {
+                    // Everything else can have a standard zoom level
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(17);
+                }
+                infowindowContent.children['place-name'].textContent = place.name;
+                infowindowContent.children['place-id'].textContent = place.place_id;
+                infowindowContent.children['place-address'].textContent = results[0].formatted_address;
+            });
+        });// End of Autocomplete place id
+        var iconMarker = {
+            path: "M7.5,18.8l-5.6-6.3c-1.3-1.4-2-3.3-1.9-5.3c0.1-1.9,0.9-3.8,2.3-5.1C3.7,0.8,5.6,0,7.5,0s3.8,0.8,5.2,2.1 c1.4,1.4,2.2,3.2,2.3,5.1c0.1,1.9-0.6,3.8-1.9,5.3C13.1,12.5,7.5,18.8,7.5,18.8z",
+            fillColor: '#536879',
+            fillOpacity: .6,
+            anchor: new google.maps.Point(0,0),
+            strokeWeight: 0,
+            scale: 1.25
+        }
+        var activeInfoWindow;
+        var Symbol = function ( id, width, height, fill ) {
+            if (id === "circle"){
+                return ('data:image/svg+xml;base64,'+window.btoa('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 '+width*2+ ' ' + width *2+'" xml:space="preserve"><circle fill="'+fill+'" cx="'+width+'" cy="'+width+'" r="'+width+'"/></svg>'));
+            }
+        }
+        currentBoundsListener = google.maps.event.addListener(map, 'idle', function () {
+            var zoom = map.getZoom();
+            if(zoom < 13){
+                if (activeInfoWindow){
+                    activeInfoWindow.close();
+                }
+            }
+            var newBounds = map.getBounds();
+            promiseMultiData.then(function(multiArray) {
+                var names = multiArray[0];
+                var addresses = multiArray[1];
+                var websites = multiArray[2];
+                var Lats = multiArray[3];
+                var Lngs = multiArray[4];
+                var markers = [];
+                var infoWindows = []
+                var bounds = map.getBounds();
+                var SW = bounds.getSouthWest();
+                var NE = bounds.getNorthEast();
+                // start for loop to create markers
+                for (var i = 0; i < Lats.length; i++) {
+                    var la = parseFloat(Lats[i]);
+                    var ln = parseFloat(Lngs[i]);
+                    var position = new google.maps.LatLng(la, ln);
+                    var addressLines = addresses[i].split(',');
+                    var addressFirstLine = addressLines[0];
+                    var addressLastLine = addressLines[addressLines.length-1];
+                    var count = addressLines.length-1;
+                    var adressMiddleLines = ""; 
+                    for(var j= 1; j < count; j++){
+                        if(addressLines[j] !== ""){
+                            adressMiddleLines += addressLines[j] + ", ";
+                        }
+                    }
+                    var html = "<div class='bold-name'><b>" + names[i] + "</b></div></br><div>" + addressFirstLine + "</br>" + adressMiddleLines + "</br>" + addressLastLine + "</br><a href='http://www.google.com/maps/place/"+addresses[i]+"' target='_blank'>Get directions</a></div></br><a href="+websites[i]+" target='_blank'>" + websites[i] + "</a>";
+                    var info = "<b>" + names[i] + "</b></br>" + addressFirstLine + "</br>" + adressMiddleLines + "</br>" + addressLastLine;
+                    if ( (NE.lat() > la && la > SW.lat()) && (NE.lng() > ln && ln > SW.lng()) ) {
+                        var marker = new google.maps.Marker({
+                            position: position,
+                            map: map,
+                            icon: iconMarker,
+                            address: addresses[i],
+                            info: info,
+                            id: i
+                        });
+                        markers.push(marker);
+                        var infowindow = new google.maps.InfoWindow({
+                            content: html,
+                        }); 
+                        infoWindows.push(infowindow.getContent()); 
+                        google.maps.event.addListener(marker, 'click', (function(marker, html) {
+                            return function() {
+                                if (activeInfoWindow){
+                                    activeInfoWindow.close();
+                                }
+                                infowindow.setContent(html);
+                                slowPanTo(map, marker.getPosition(), 1, 30);
+                                infowindow.open(map, marker);
+                                if(map.getZoom() < 17){
+                                    map.setZoom(17);
+                                }
+                                activeInfoWindow = infowindow;
+                            }
+                        })(marker, html));
+                    };// end if                
+                };//end for loop to create markers  
+                // Add a marker clusterer to manage the markers
+                var markerCluster = new MarkerClusterer(map, markers, { styles:[
+                                                                        {textColor:'white',textSize:'16',width:45,height:45,url:Symbol('circle',45,45,'#536879')},
+                                                                        {textColor:'white',textSize:'16',width:45,height:45,url:Symbol('circle',45,45,'#536879')},
+                                                                        {textColor:'white',textSize:'16',width:45,height:45,url:Symbol('circle',45,45,'#536879')}
+                                                                     ], gridSize: 100});
+                if(bounds == null ){
+                    map.fitBounds(bounds); 
+                    bounds = map.getBounds();
+                }else{
+                    if(bounds != newBounds){
+                        for (var i = 0; i < markers.length; i++) {
+                            markers[i].setMap(null);
+                        }
+                        var col1 = document.getElementById('column-1');
+                        var col2 = document.getElementById('column-2');
+                        var col3 = document.getElementById('column-3');
+                        while(col1.firstChild || col2.firstChild || col3.firstChild){
+                            if(col1.firstChild){
+                                col1.removeChild(col1.firstChild);
+                            }
+                            if(col2.firstChild){
+                                col2.removeChild(col2.firstChild);
+                            }                            
+                            if(col3.firstChild){
+                                col3.removeChild(col3.firstChild);
+                            }
+                        }
+                        var para = document.createElement("P");  
+                        var divsNumber = markers.length;
+                        var remainder = divsNumber % 3;
+                        var oneThird = (divsNumber - remainder)/3;
+                        var firstThirdEnd = oneThird;                        
+                        var secondThird = oneThird;                        
+                        var secondThirdEnd = (oneThird*2);                        
+                        var thirdThird = secondThirdEnd;
+                        var thirdThirdEnd = divsNumber;
+                        if (remainder == 1){
+                            firstThirdEnd = oneThird + 1;
+                            secondThird = firstThirdEnd;
+                            secondThirdEnd = firstThirdEnd + oneThird;
+                            thirdThird = secondThirdEnd;
+                        }
+                        if (remainder == 2){
+                            firstThirdEnd = oneThird + 1;
+                            secondThird = firstThirdEnd;
+                            secondThirdEnd = secondThirdEnd+2;
+                            thirdThird = secondThirdEnd;
+                        }
+                        var addressesToThirds = [];
+                        var directionsToThirds = [];
+                        for(var i = 0; i < markers.length; i++){
+                            if(infoWindows[i] != null){
+                                addressesToThirds.push("<a class='marker-link' style='cursor: pointer' data-markerid=" + i + "><div id="+i+" class='visiblePointInfo'>"+markers[i].info+"</div></a>");
+                                directionsToThirds.push("<div id="+i+" class='get-directions'><a class='get-directions-link' href='http://www.google.com/maps/place/"+markers[i].address+"' target='_blank'>Get directions</a></div>");
+                            }
+                        }
+                        //first column
+                        for (var i = 0; i < firstThirdEnd; i++) {
+                            var iconPoint = document.createElement('div');
+                            var pointAddress = document.createElement('div');
+                            var getDirection = document.createElement('div');
+                            iconPoint.innerHTML = "<div class='icoMarker'><svg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 10 10'><path d='M2.5,6.3L0.6,4.2C0.2,3.7,0,3.1,0,2.4c0-0.6,0.3-1.3,0.8-1.7C1.2,0.3,1.9,0,2.5,0s1.3,0.3,1.7,0.7C4.7,1.1,5,1.8,5,2.4c0,0.6-0.2,1.3-0.6,1.8C4.4,4.2,2.5,6.3,2.5,6.3z'/></div>";
+                            pointAddress.innerHTML = addressesToThirds[i];
+                            getDirection.innerHTML = directionsToThirds[i];
+                            iconPoint = iconPoint.firstChild;
+                            pointAddress = pointAddress.firstChild;
+                            getDirection = getDirection.firstChild;
+                            col1.appendChild(iconPoint);
+                            col1.appendChild(pointAddress);
+                            col1.appendChild(getDirection);
+                        }
+                        //second column
+                        for (var i = secondThird; i < secondThirdEnd; i++){
+                            var iconPoint = document.createElement('div');
+                            var pointAddress = document.createElement('div');
+                            var getDirection = document.createElement('div');
+                            iconPoint.innerHTML = "<div class='icoMarker'><svg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 10 10'><path d='M2.5,6.3L0.6,4.2C0.2,3.7,0,3.1,0,2.4c0-0.6,0.3-1.3,0.8-1.7C1.2,0.3,1.9,0,2.5,0s1.3,0.3,1.7,0.7C4.7,1.1,5,1.8,5,2.4c0,0.6-0.2,1.3-0.6,1.8C4.4,4.2,2.5,6.3,2.5,6.3z'/></div>";
+                            pointAddress.innerHTML = addressesToThirds[i];
+                            getDirection.innerHTML = directionsToThirds[i];
+                            iconPoint = iconPoint.firstChild;
+                            pointAddress = pointAddress.firstChild;
+                            getDirection = getDirection.firstChild;
+                            col2.appendChild(iconPoint);
+                            col2.appendChild(pointAddress);
+                            col2.appendChild(getDirection);
+                        }
+                        //third column
+                        for (var i = thirdThird; i < thirdThirdEnd; i++){
+                            var iconPoint = document.createElement('div');
+                            var pointAddress = document.createElement('div');
+                            var getDirection = document.createElement('div');
+                            iconPoint.innerHTML = "<div class='icoMarker'><svg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 10 10'><path d='M2.5,6.3L0.6,4.2C0.2,3.7,0,3.1,0,2.4c0-0.6,0.3-1.3,0.8-1.7C1.2,0.3,1.9,0,2.5,0s1.3,0.3,1.7,0.7C4.7,1.1,5,1.8,5,2.4c0,0.6-0.2,1.3-0.6,1.8C4.4,4.2,2.5,6.3,2.5,6.3z'/></div>";
+                            pointAddress.innerHTML = addressesToThirds[i];
+                            getDirection.innerHTML = directionsToThirds[i];
+                            iconPoint = iconPoint.firstChild;
+                            pointAddress = pointAddress.firstChild;
+                            getDirection = getDirection.firstChild;
+                            col3.appendChild(iconPoint);
+                            col3.appendChild(pointAddress);
+                            col3.appendChild(getDirection);
+                        }
+                        $('.marker-link').on('click', function () {
+                            google.maps.event.trigger(markers[$(this).data('markerid')], 'click');
+                            if(map.getZoom() < 17){
+                                map.setZoom(17);
+                            }                                
+                        });
+                        bounds = newBounds; //set old bounds to new bounds
+                    }
+                }       
+            });            
+        });// End of currentBoundsListener  
+        
+        function processData(data) {        
+            var allTextLines = data.split(/\r\n|\n/);
+            var headers = allTextLines[0].split(',');
+            var lines = [];
+            var addressJSON = [];
+            var namesJSON = [];
+            var websitesJSON = [];
+            var LatJSON = [];
+            var LngJSON = [];
+            var addressesString = []; // all addresses from data sheet as String
+            var websitesString = []; // all websites from data sheet as String
+            var namesString = []; // all names from data sheet as String
+            var LatString = []; // all latitudes from data sheet as String
+            var LngString = []; // all longitudes from data sheet as String
+            for (var i = 1; i < allTextLines.length; i++){
+                var data = allTextLines[i].split(',');
+                if (data.length == headers.length){
+                    var tarr = [];
+                    for (var j=0; j<headers.length; j++){
+                        tarr.push(headers[j]+":"+data[j]);
+                        if(headers[j] == "Name" || headers[j] == "name"){
+                            namesJSON.push((data[j]).replace(/~/g, ","));
+                        }
+                        if(headers[j] == "Address" || headers[j] == "address"){
+                            addressJSON.push((data[j]).replace(/~/g, ","));
+                        }                    
+                        if(headers[j] == "Website" || headers[j] == "website"){
+                            websitesJSON.push((data[j]).replace(/~/g, ","));
+                        }
+                        if(headers[j] == "Lat"){
+                            LatJSON.push((data[j]));
+                        }
+                        if(headers[j] == "Lng"){
+                            LngJSON.push((data[j]));
+                        }
+                    }
+                }
+            }        
+            for( var i = 0; i < addressJSON.length; i++ ){
+                var addressStr = JSON.stringify(addressJSON[i]);
+                var address = addressStr.substring(1, addressStr.length-1); //removing quotes from stringified json 
+                var nameStr = JSON.stringify(namesJSON[i]);
+                var name = nameStr.substring(1, nameStr.length-1); //removing quotes from stringified json
+                var websiteStr = JSON.stringify(websitesJSON[i]);
+                var website = websiteStr.substring(1, websiteStr.length-1); //removing quotes from stringified json 
+                var LatStr = JSON.stringify(LatJSON[i]);
+                var Lat = LatStr.substring(1, LatStr.length-1); //removing quotes from stringified json
+                var LngStr = JSON.stringify(LngJSON[i]);
+                var Lng = LngStr.substring(1, LngStr.length-1); //removing quotes from stringified json
+                addressesString.push(address);
+                namesString.push(name);
+                websitesString.push(website);
+                LatString.push(Lat);
+                LngString.push(Lng);
+            }
+            var multiArray=[];
+            multiArray.push(namesString);
+            multiArray.push(addressesString);
+            multiArray.push(websitesString);
+            multiArray.push(LatString);
+            multiArray.push(LngString);
+            return multiArray;
+        }//end proccess data from google sheet 
+        // gets async data from the google sheet
+        var promiseMultiData = getSheetData().then(function(response) {
+            var multiArray = processData(response);
+            return multiArray;
+        });// end getSheertData().then
+    }//initMap end
+    function getSheetData() {
+        var url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSIJ0a26xFPWNSMAbeUOpzGnS34-v4YwdHi9KAn2Q1lnUY73nbNMY_CwVjSScjLsdS3-6rpj5MxDFkN/pub?gid=14512357&single=true&output=csv";
+        // Return a new promise.
+        return new Promise(function(resolve, reject) {
+            var req = new XMLHttpRequest();
+            if ("withCredentials" in req) {
+                // XHR for Chrome/Firefox/Opera/Safari.
+                req.open('GET', url, true);
+            } else if (typeof XDomainRequest != "undefined") {
+                // XDomainRequest for IE.
+                req = new XDomainRequest();
+                req.open('GET', url);
+            } else {
+                // CORS not supported.
+                req = null;
+            }
+            req.onload = function() {
+                if (req.status == 200) {
+                    resolve(req.response);
+                }
+                else {
+                    reject(Error(req.statusText));
+                }
+            };
+            req.onerror = function() {
+                reject(Error("Network Error"));
+            };
+            // Make the request
+            req.send();
+        });
+    };//end getSheetData;
+    $('.outsideMarker').on('mouseover', function(){
+            $(this).parent().removeClass('threeCols');
+            $(this).parent().addClass('scroll');
+        }).on('mouseout', function(){
+            $(this).parent().removeClass('scroll');
+            $(this).parent().addClass('threeCols');
+    });
+</script>
+</body>
+</html> 
