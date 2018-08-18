@@ -769,13 +769,12 @@
             req.send();
         });
     };//end getSheetData;
-$('.outsideMarker')//.on('mouseover', function()
-    {
+$('.outsideMarker').on('mouseover', function(){
             $(this).parent().removeClass('threeCols');
             $(this).parent().addClass('scroll');
-        }//).on('mouseout', function(){
-            //$(this).parent().removeClass('scroll');
-            //$(this).parent().addClass('threeCols');
+        }).on('mouseout', function(){
+            $(this).parent().removeClass('scroll');
+            $(this).parent().addClass('threeCols');
     });  
 </script>
 </body>
