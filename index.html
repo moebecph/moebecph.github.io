@@ -438,7 +438,7 @@
                         } else if (results[0].address_components[0].types[0] == "locality") {
                             // city
                             map.setCenter(results[0].geometry.location);
-                            map.setZoom(9);
+                            map.setZoom(10);
                         } else {
                             // Everything else can have a standard zoom level
                             map.setCenter(results[0].geometry.location);
