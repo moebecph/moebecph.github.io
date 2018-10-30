@@ -438,11 +438,11 @@
                         } else if (results[0].address_components[0].types[0] == "locality") {
                             // city
                             map.setCenter(results[0].geometry.location);
-                            map.setZoom(10);
+                            map.setZoom(11);
                         } else {
                             // Everything else can have a standard zoom level
                             map.setCenter(results[0].geometry.location);
-                            map.setZoom(11);
+                            map.setZoom(17);
                         }
                     }
                 });
@@ -466,7 +466,7 @@
                 } else if (results[0].address_components[0].types[0] == "locality" || results[0].address_components[0].types[0] == "sublocality" || results[0].address_components[0].types[0] == "postal_code") {
                     // city
                     map.setCenter(results[0].geometry.location);
-                    map.setZoom(13);
+                    map.setZoom(11);
                 } else {
                     // Everything else can have a standard zoom level
                     map.setCenter(results[0].geometry.location);
@@ -493,7 +493,7 @@
         }
         currentBoundsListener = google.maps.event.addListener(map, 'idle', function () {
             var zoom = map.getZoom();
-            if(zoom < 13){
+            if(zoom < 11){
                 if (activeInfoWindow){
                     activeInfoWindow.close();
                 }
