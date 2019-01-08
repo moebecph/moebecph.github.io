@@ -610,7 +610,7 @@
                         var directionsToThirds = [];
                         for(var i = 0; i < markers.length; i++){
                             if(infoWindows[i] != null){
-                                addressesToThirds.push("<a class='marker-link' style='cursor: color='#536879: pointer' data-markerid=" + i + "><div id="+i+" class='visiblePointInfo'>"+markers[i].info+"</div></a>");
+                                addressesToThirds.push("<a class='marker-link' style='cursor: pointer' data-markerid=" + i + "><div id="+i+" class='visiblePointInfo'>"+markers[i].info+"</div></a>");
                                 directionsToThirds.push("<div id="+i+" class='get-directions'><a class='get-directions-link' href='http://www.google.com/maps/place/"+markers[i].address+"' target='_blank'>Get directions</a></div>");
                             }
                         }
