@@ -352,7 +352,7 @@
                 stylers: [{color: '#3f3f3f'}]
             },
             {
-                featureType: 'country',
+                featureType: 'administrative.country',
                 elementType: 'geometry.stroke',
                 stylers: [{color: '#c3a688'}]
             },
@@ -410,7 +410,7 @@
         };
         // Autocomplete place id
         var input = document.getElementById('pac-input');
-        var autocomplete = new google.maps.places.Autocomplete(input, {placeIdOnly: true}, {types: ['geocode']});
+        var autocomplete = new google.maps.places.Autocomplete(input, {placeId: true}, {types: ['geocode']});
         autocomplete.bindTo('bounds', map);
         var infowindow = new google.maps.InfoWindow();
         var infowindowContent = document.getElementById('infowindow-content');
@@ -740,12 +740,13 @@
             return multiArray;
         });// end getSheertData().then
     }//initMap end
+    
     function getSheetData() {
-        var url = "https://moebelocationserver.herokuapp.com/"
-        // var url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSIJ0a26xFPWNSMAbeUOpzGnS34-v4YwdHi9KAn2Q1lnUY73nbNMY_CwVjSScjLsdS3-6rpj5MxDFkN/pub?gid=14512357&single=true&output=csv";
+        var url = 'https://moebelocationserver.herokuapp.com/'
         // Return a new promise.
-        return new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {  
             var req = new XMLHttpRequest();
+            
             if ("withCredentials" in req) {
                 // XHR for Chrome/Firefox/Opera/Safari.
                 req.open('GET', url, true);
@@ -766,9 +767,10 @@
                 }
             };
             req.onerror = function() {
-                reject(Error("Network Error"));
+                reject(Error("Network Error No Data"));
+                
             };
-            // Make the request
+            // Make the request            
             req.send();
         });
     };//end getSheetData;
